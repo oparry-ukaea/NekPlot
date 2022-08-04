@@ -4,10 +4,10 @@ import os.path
 
 class SingleFileDataSrc(DiskDataSrc):
     def __init__(self,path,**kwargs) -> None:
-        super().__init__(**kwargs)
+        DiskDataSrc().__init__(**kwargs)
         self.path = path
 
-    def exists(self):
+    def _exists(self):
         return os.path.isfile(self.path)
 
     def __str__(self):

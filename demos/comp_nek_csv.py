@@ -1,5 +1,5 @@
 import demo_setup
-from NekPlot.data import Get_source
+from NekPlot.data import get_source
 from matplotlib import pyplot as plt
 import os.path
 import sys
@@ -14,7 +14,7 @@ def plot_rho_u_T(data_srcs):
         axes[ii].set_xlabel("x")
         axes[ii].set_ylabel(prop_labels[prop])
         for data_src in data_srcs:
-            axes[ii].plot(data_src.read('coords'), data_src.read(prop), label=data_src.label, **data_src.Get_plot_kws())
+            axes[ii].plot(data_src.get('coords'), data_src.get(prop), label=data_src.label, **data_src.get_plot_kws())
 
     # Add legend to all axes
     for ax in axes:
@@ -48,10 +48,10 @@ def compare_nek_runs_rho_u_T(run_paths, session_fnames, plot_styles, file_bases_
     # Generate nektar sources and add new fields
     data_srcs = []
     for irun in range(arg_lens[0]):
-        nsrc = Get_source("nektar", run_paths[irun], session_fnames[irun], file_base=file_bases[irun], label=run_labels[irun])
-        nsrc.Set_plot_kws(plot_styles[irun])
-        nsrc.AddField('u', "rhou/rho")
-        nsrc.AddField('T', "(E-rhou*rhou/rho/2)/rho*(Gamma-1.0)/GasConstant")
+        nsrc = get_source("nektar", run_paths[irun], session_fnames[irun], file_base=file_bases[irun], label=run_labels[irun])
+        nsrc.set_plot_kws(plot_styles[irun])
+        nsrc.add_field('u', "rhou/rho")
+        nsrc.add_field('T', "(E-rhou*rhou/rho/2)/rho*(Gamma-1.0)/GasConstant")
         data_srcs.append(nsrc)
 
     plot_rho_u_T(data_srcs)
@@ -62,15 +62,15 @@ def compare_rho_u_T_with_analytic(nektar_run_path, nektar_session_fname, analyti
     nektar_label = "nektar, %s" % os.path.basename(nektar_run_path) if nektar_label_in is None else nektar_label_in
     
     # Add analytic data source
-    dsv_src = Get_source("dsv", analytic_csv_path, delimiter=",", label="analytic")
-    dsv_src.Add_var_name_mappings(analytic_var_name_mappings)
-    dsv_src.Set_plot_kws(dict(linestyle="-", color='r'))
+    dsv_src = get_source("dsv", analytic_csv_path, delimiter=",", label="analytic")
+    dsv_src.add_var_name_mappings(analytic_var_name_mappings)
+    dsv_src.set_plot_kws(dict(linestyle="-", color='r'))
 
     # Add nektar source
-    nsrc = Get_source("nektar", nektar_run_path, nektar_session_fname, file_base=nektar_file_base, label=nektar_label)
-    nsrc.Set_plot_kws(dict(color='b', linestyle="", linewidth=0.2, marker='x', markersize=5, markeredgewidth=0.5, mec='b', mfc='b', markevery=8 ))
-    nsrc.AddField('u', "rhou/rho")
-    nsrc.AddField('T', "(E-rhou*rhou/rho/2)/rho*(Gamma-1.0)/GasConstant")
+    nsrc = get_source("nektar", nektar_run_path, nektar_session_fname, file_base=nektar_file_base, label=nektar_label)
+    nsrc.set_plot_kws(dict(color='b', linestyle="", linewidth=0.2, marker='x', markersize=5, markeredgewidth=0.5, mec='b', mfc='b', markevery=8 ))
+    nsrc.add_field('u', "rhou/rho")
+    nsrc.add_field('T', "(E-rhou*rhou/rho/2)/rho*(Gamma-1.0)/GasConstant")
     
     plot_rho_u_T([dsv_src, nsrc])
 #==================================================================================================

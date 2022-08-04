@@ -1,16 +1,16 @@
-from ..dsv import ReadDSV
+from ..dsv import read_dsv
 from .SingleFileDataSrc import SingleFileDataSrc
 
 class DSVDataSrc(SingleFileDataSrc):
-    def __init__(self,path,delimiter=",", **kwargs):
-        super().__init__(path,**kwargs)
-        self.data = None       
+    def __init__(self,path,delimiter=",", **kwargs) -> None:
+        SingleFileDataSrc().__init__(path,**kwargs)
+        self.data      = None       
         self.delimiter = delimiter
         self.type      = "DSV"
 
-    def _read(self, var_name, *args, **kwargs):
+    def _get(self, var_name, *args, **kwargs):
         if self.data is None:
-            self.data = ReadDSV(self.path,**kwargs)
+            self.data = read_dsv(self.path,**kwargs)
         return self.data[var_name]
 
     def __str__(self):

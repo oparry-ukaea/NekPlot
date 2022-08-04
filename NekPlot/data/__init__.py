@@ -1,1 +1,1 @@
-from .sources.src_getter import Get_source
+from .sources.src_getter import get_source

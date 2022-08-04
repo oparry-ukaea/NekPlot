@@ -1,10 +1,10 @@
 import os
 from NekPy.FieldUtils import Field, InputModule, ProcessModule
 
-#def AddField(fields, new_field_name, new_field_def):
+#def add_field(fields, new_field_name, new_field_def):
 #    ProcessModule.Create("fieldfromstring", fields, fieldstr=new_field_def, fieldname=new_field_name).Run()
 
-def Read_fields(fpath,config_fpath, *args, derived_fields=None, **kwargs):
+def read_fields(fpath,config_fpath, *args, derived_fields=None, **kwargs):
     """Read chk/fld files/dirs using NekPy"""
     if not os.path.exists(fpath):
         raise RuntimeError(__name__+f": No nektar output found at {fpath}")

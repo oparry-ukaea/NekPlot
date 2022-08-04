@@ -1,1 +1,1 @@
-from .reader import ReadDSV
+from .reader import read_dsv

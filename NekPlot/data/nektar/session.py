@@ -4,7 +4,7 @@ from NekPy.LibUtilities import SessionReader
 from NekPy.SpatialDomains import MeshGraph
 
 #==================================================================================================
-def Read_session_and_mesh(run_root, session_fname, *other_args):
+def read_session_and_mesh(run_root, session_fname, *other_args):
     # Try session filename as-is first, then append '.xml' if it's not found 
     session = None
     graph   = None
