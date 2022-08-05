@@ -4,7 +4,7 @@ import os.path
 
 class SingleFileDataSrc(DiskDataSrc):
     def __init__(self,path,**kwargs) -> None:
-        DiskDataSrc().__init__(**kwargs)
+        super(DiskDataSrc,self).__init__(**kwargs)
         self.path = path
 
     def _exists(self):
