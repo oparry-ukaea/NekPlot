@@ -1,8 +1,18 @@
+import re
 import os
 from NekPy.FieldUtils import Field, InputModule, ProcessModule
 
-#def add_field(fields, new_field_name, new_field_def):
-#    ProcessModule.Create("fieldfromstring", fields, fieldstr=new_field_def, fieldname=new_field_name).Run()
+def detect_filebase(root_dir,exts=["chk","fld"]):
+    matcher = re.compile("(.*)_[0-9]*\.(?:"+"|".join(exts)+")$")
+    fbases = set([match.groups()[0] for match in [matcher.match(os.path.basename(p)) for p in os.listdir(root_dir)] if match])
+    if len(fbases)==0:
+        raise RuntimeError("No files of type "+" or ".join(exts)+f" found in {root_dir}")
+    else:
+        first_fbase = list(fbases)[0]
+        if len(fbases)>1:
+            print(__name__+f": WARNING: found >1 possible file base in {root_dir}...using {first_fbase}.")
+        return first_fbase
+
 
 def read_fields(fpath,config_fpath, *args, derived_fields=None, **kwargs):
     """Read chk/fld files/dirs using NekPy"""

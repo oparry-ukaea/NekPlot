@@ -33,12 +33,11 @@ def print_usage():
 #--------------------------------------------------------------------------------------------------
 
 #==================================================================================================
-def compare_nek_runs_rho_u_T(run_paths, plot_styles, file_bases_in=None, run_labels_in=None):
+def compare_nek_runs_rho_u_T(run_paths, plot_styles, run_labels_in=None):
     run_labels = [os.path.basename(p) for p in run_paths] if run_labels_in is None else run_labels_in
-    file_bases = [""]*len(run_paths) if file_bases_in is None else file_bases_in
 
     # Check arg sizes all agree
-    arg_lens = [len(file_bases),len(run_paths),len(run_labels), len(plot_styles)]
+    arg_lens = [len(run_paths),len(run_labels), len(plot_styles)]
     ulens = set(arg_lens)
     if len(ulens) != 1:
         exit(__name__+": argument lengths must all be the same")
@@ -46,7 +45,7 @@ def compare_nek_runs_rho_u_T(run_paths, plot_styles, file_bases_in=None, run_lab
     # Generate nektar sources and add new fields
     data_srcs = []
     for irun in range(arg_lens[0]):
-        nsrc = get_source("nektar", run_paths[irun], file_base=file_bases[irun], label=run_labels[irun])
+        nsrc = get_source("nektar", run_paths[irun], label=run_labels[irun])
         nsrc.set_plot_kws(plot_styles[irun])
         nsrc.add_field('u', "rhou/rho")
         nsrc.add_field('T', "(E-rhou*rhou/rho/2)/rho*(Gamma-1.0)/GasConstant")
@@ -56,7 +55,7 @@ def compare_nek_runs_rho_u_T(run_paths, plot_styles, file_bases_in=None, run_lab
 #==================================================================================================
 
 #==================================================================================================
-def compare_rho_u_T_with_analytic(nektar_run_path, analytic_csv_path, analytic_var_name_mappings, nektar_file_base="", nektar_label_in=None):
+def compare_rho_u_T_with_analytic(nektar_run_path, analytic_csv_path, analytic_var_name_mappings, nektar_label_in=None):
     nektar_label = "nektar, %s" % os.path.basename(nektar_run_path) if nektar_label_in is None else nektar_label_in
     
     # Add analytic data source
@@ -65,7 +64,7 @@ def compare_rho_u_T_with_analytic(nektar_run_path, analytic_csv_path, analytic_v
     dsv_src.set_plot_kws(dict(linestyle="-", color='r'))
 
     # Add nektar source
-    nsrc = get_source("nektar", nektar_run_path, file_base=nektar_file_base, label=nektar_label)
+    nsrc = get_source("nektar", nektar_run_path, label=nektar_label)
     nsrc.set_plot_kws(dict(color='b', linestyle="", linewidth=0.2, marker='x', markersize=5, markeredgewidth=0.5, mec='b', mfc='b', markevery=8 ))
     nsrc.add_field('u', "rhou/rho")
     nsrc.add_field('T', "(E-rhou*rhou/rho/2)/rho*(Gamma-1.0)/GasConstant")
@@ -79,8 +78,13 @@ def demo_rho_u_plots(nektar_run_paths, analytic_csv_path):
     analytic_var_name_mappings = dict(coords="x",rho="density",u="velocity",T="temperature")
     compare_rho_u_T_with_analytic(nektar_run_paths[0], analytic_csv_path, analytic_var_name_mappings)
 
+    # Generate plot keywords
+    lstys = ["-", ":","-.", ":","--", ":"]
+    colors = "rbgcm"
+    plot_styles    = []
+    for _,lsty,color in zip(nektar_run_paths,lstys,colors):
+        plot_styles.append(dict(linestyle=lsty, color=color))
     # Compare multiple nektar runs with each other
-    plot_styles    = plot_styles=[dict(linestyle="--", color='r'),dict(linestyle=":", color='b')]
     compare_nek_runs_rho_u_T(nektar_run_paths, plot_styles)
 #==================================================================================================
 
