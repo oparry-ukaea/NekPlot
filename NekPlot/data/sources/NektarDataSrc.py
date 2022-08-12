@@ -15,14 +15,9 @@ class NektarDataSrc(DiskDataSrc):
         self.session_fname = session_fname
         self.type = "NEKTAR"
         
-        if self.session_fname is None:
-            raise NotImplementedError("NektarDataSrc not set up to work without session XML yet.")
-        else:
-            self.file_base = session_fname if file_base is None else file_base
-            # Allow more args to be passed through to read_session_and_mesh here?
-            self.session,self.mesh = read_session_and_mesh(self.run_root, self.session_fname)
-            # Needed for reading fields... duplicates code in read_session_and_mesh, unfortunately
-            self.session_fpath = os.path.join(run_root,session_fname)
+        self.file_base = session_fname if file_base is None else file_base
+        # Allow more args to be passed through to read_session_and_mesh here?
+        self.session,self.session_fpath,self.mesh = read_session_and_mesh(self.run_root, session_fname=self.session_fname)
 
         self._init_var_idx_map()
 
