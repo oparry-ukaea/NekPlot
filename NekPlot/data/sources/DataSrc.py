@@ -1,8 +1,8 @@
 from abc import ABC, abstractmethod
 
 class DataSrc(ABC):
-    def __init__(self,**kwargs) -> None:
-        self.label        = kwargs.pop('label','Unlabelled data source')
+    def __init__(self,label='Unlabelled data source') -> None:
+        self.label        = label
         self.plot_kws     = {}
         self.type         = None
         self.var_name_map = {}

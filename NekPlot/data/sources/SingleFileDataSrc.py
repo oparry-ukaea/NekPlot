@@ -3,8 +3,8 @@ from .DiskDataSrc import DiskDataSrc
 import os.path
 
 class SingleFileDataSrc(DiskDataSrc):
-    def __init__(self,path,**kwargs) -> None:
-        super(DiskDataSrc,self).__init__(**kwargs)
+    def __init__(self, path, **kwargs) -> None:
+        super().__init__(**kwargs)
         self.path = path
 
     def _exists(self):

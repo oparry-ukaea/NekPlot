@@ -5,7 +5,7 @@ from ..nektar import read_fields, read_session_and_mesh
 
 class NektarDataSrc(DiskDataSrc):
     def __init__(self,run_root,session_fname=None,chk_num=None,file_base=None, **kwargs) -> None:
-        super(DiskDataSrc,self).__init__(**kwargs)
+        super().__init__(**kwargs)
         self.chk_num = chk_num
         self.derived_fields = {}
         self.fd = None # Field data cache

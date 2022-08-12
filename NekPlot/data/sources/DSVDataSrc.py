@@ -2,8 +2,8 @@ from ..dsv import read_dsv
 from .SingleFileDataSrc import SingleFileDataSrc
 
 class DSVDataSrc(SingleFileDataSrc):
-    def __init__(self,path,delimiter=",", **kwargs) -> None:
-        super(SingleFileDataSrc,self).__init__(path,**kwargs)
+    def __init__(self, path, delimiter=",", **kwargs) -> None:
+        super().__init__(path, **kwargs)
         self.data      = None       
         self.delimiter = delimiter
         self.type      = "DSV"
