@@ -23,7 +23,7 @@ def read_fields(fpath,config_fpath, *args, derived_fields=None, **kwargs):
     InputModule.Create("xml", field, config_fpath).Run()
 
     try:
-        # Read fld/chk file (type is 'fld', regardless)
+        # Read fld/chk file (type is 'fld', regardless of whether output format is default or hdf5)
         InputModule.Create("fld", field, fpath).Run()        
 
         # Add any derived fields that have been requested
