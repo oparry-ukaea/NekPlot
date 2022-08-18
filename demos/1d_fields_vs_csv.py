@@ -1,3 +1,10 @@
+"""
+Demonstrates
+- reading of 1D fields (rho, rhou, E) from nektar output
+- calculation of derived fields (u from rhou,rho; T from rho,u,E)
+- comparison with CSV data
+"""
+
 import demo_setup
 from NekPlot.data import get_source
 from matplotlib import pyplot as plt
