@@ -4,22 +4,20 @@ from .DiskDataSrc import DiskDataSrc
 from ..nektar import detect_filebase, read_fields, read_session_and_mesh
 
 class NektarDataSrc(DiskDataSrc):
-    def __init__(self,run_root,session_fname=None,chk_num=None,file_base=None, **kwargs) -> None:
+    def __init__(self,run_root,session_fnames=None,chk_num=None,file_base=None, **kwargs) -> None:
         super().__init__(**kwargs)
         self.chk_num = chk_num
         self.derived_fields = {}
         self.fd = None # Field data cache
+        self.file_base = file_base
         self.mesh = None
         self.run_root = run_root
         self.session = None
-        self.session_fname = session_fname
+        self.session_fnames = session_fnames
         self.type = "NEKTAR"
-        
-        # file_base defaults to session_fname (may still be None!)
-        self.file_base = session_fname if file_base is None else file_base
 
         # Allow more args to be passed through to read_session_and_mesh here?
-        self.session,self.session_fpath,self.mesh = read_session_and_mesh(self.run_root, session_fname=self.session_fname)
+        self.session,self.session_fpaths,self.mesh = read_session_and_mesh(self.run_root, session_fnames=self.session_fnames)
 
         self._init_var_idx_map()
 
@@ -49,7 +47,7 @@ class NektarDataSrc(DiskDataSrc):
             path_end = f"{file_base}.fld" if self.chk_num is None else f"{file_base}_{self.chk_num}.chk"
             field_fpath = os.path.join(self.run_root,path_end)
             # Read field data. For now this just gets equally spaced points
-            self.fd = read_fields(field_fpath, self.session_fpath, *args, derived_fields=self.derived_fields, **kwargs)
+            self.fd = read_fields(field_fpath, self.session_fpaths, *args, derived_fields=self.derived_fields, **kwargs)
 
         return self.fd.GetPts(var_idx)
 
