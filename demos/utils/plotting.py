@@ -10,13 +10,15 @@ for chk_num,color,lsty in zip(range(0,100,20),"rbgcm",["-", ":", "-.", ":","--"]
 
 #--------------------------------------------------------------------------------------------------
 # Helper functions
-def plot_rho_u_T(data_srcs):
+def plot_rho_u_T(data_srcs,fpath=None):
     # Plot rho, u, T from each data source in three panels
-    fig,axes = plt.subplots(nrows=1, ncols=3, figsize=(17, 5))
+    fig,axes = plt.subplots(nrows=1, ncols=3, figsize=(18, 5))
+    plt.subplots_adjust(left=0.05,right=0.95,top=0.95)
     prop_labels = dict(rho=r'$\rho$',u=r'$u$',T=r'$T$')
     for ii,prop in enumerate(['rho','u','T']):
-        axes[ii].set_xlabel("x")
-        axes[ii].set_ylabel(prop_labels[prop])
+        axes[ii].set_xlabel("s",fontsize=16)
+        axes[ii].set_ylabel(prop_labels[prop],fontsize=15)
+        axes[ii].tick_params(labelsize=12)
         for data_src in data_srcs:
             axes[ii].plot(data_src.get('coords'), data_src.get(prop), label=data_src.label, **data_src.get_plot_kws())
 
@@ -24,5 +26,8 @@ def plot_rho_u_T(data_srcs):
     for ax in axes:
         ax.legend()
 
-    plt.show(block=True)
+    if fpath is None:
+        plt.show(block=True)
+    else:
+        plt.savefig(fpath)
 #--------------------------------------------------------------------------------------------------

@@ -23,7 +23,7 @@ dsv_src.set_plot_kws(plot_styles["analytic"])
 
 
 # Add Nektar source
-nek_src = get_source("nektar", LOCATIONS["sol1D"], label="sol1D")
+nek_src = get_source("nektar", LOCATIONS["sol1D"], label="nektar")
 
 # Add derived fields
 nek_src.add_field('u', "rhou/rho")
@@ -34,3 +34,4 @@ nek_src.set_plot_kws(plot_styles["sol1D_pts"])
 
 
 plot_rho_u_T([dsv_src, nek_src])
+#plot_rho_u_T([dsv_src, nek_src],fpath=os.path.join(LOCATIONS["sol1D"],"sol-1D_rho-u-T.png"))
