@@ -61,14 +61,16 @@ class NektarDataSrc(DiskDataSrc):
 
 
     def _init_var_idx_map(self):
-        nd = self.mesh.GetMeshDimension()
-        if nd != 1:
-            raise NotImplementedError(f"Mesh dimension is {nd} but NektarDataSrc is only setup for 1D so far. _init_var_idx_map() and possibly other methods may need to change.")
-
         self._var_idx_map = {}
-        self._var_idx_map['coords'] = 0
+        nDims = self.mesh.GetMeshDimension()
+
+        # Coords are read as fields from leading indices
+        coord_labels = 'xyz'
+        for coord_idx in range(nDims):
+            self._var_idx_map[coord_labels[coord_idx]] = coord_idx
+
         for var_idx,var_name in enumerate(self.session.GetVariables()):
-            self._var_idx_map[var_name] = var_idx + nd
+            self._var_idx_map[var_name] = var_idx + nDims
 
 
     def __str__(self):

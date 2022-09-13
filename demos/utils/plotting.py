@@ -20,7 +20,7 @@ def plot_rho_u_T(data_srcs,fpath=None):
         axes[ii].set_ylabel(prop_labels[prop],fontsize=15)
         axes[ii].tick_params(labelsize=12)
         for data_src in data_srcs:
-            axes[ii].plot(data_src.get('coords'), data_src.get(prop), label=data_src.label, **data_src.get_plot_kws())
+            axes[ii].plot(data_src.get('x'), data_src.get(prop), label=data_src.label, **data_src.get_plot_kws())
 
     # Add legend to all axes
     for ax in axes:
