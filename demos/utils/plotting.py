@@ -2,8 +2,9 @@ from matplotlib import pyplot as plt
 
 # define some sets of plot keywords
 plot_styles = {}
-plot_styles["analytic"]  = dict(linestyle="-", color='r')
-plot_styles["sol1D_pts"] = dict(color='b', linestyle="", linewidth=0.2, marker='x', markersize=5, markeredgewidth=0.5, mec='b', mfc='b', markevery=8 )
+plot_styles["analytic"]     = dict(linestyle="-", color='r')
+plot_styles["convection2D"] = dict()
+plot_styles["sol1D_pts"]    = dict(color='b', linestyle="", linewidth=0.2, marker='x', markersize=5, markeredgewidth=0.5, mec='b', mfc='b', markevery=8 )
 
 for chk_num,color,lsty in zip(range(0,100,20),"rbgcm",["-", ":", "-.", ":","--"]):
     plot_styles[f"sol1D_chk{chk_num}"] = dict(color=color,linestyle=lsty)
@@ -30,4 +31,14 @@ def plot_rho_u_T(data_srcs,fpath=None):
         plt.show(block=True)
     else:
         plt.savefig(fpath)
+#--------------------------------------------------------------------------------------------------
+
+#--------------------------------------------------------------------------------------------------
+def plot_u_field(data_src):
+    fig,axes = plt.subplots(nrows=1, ncols=1, figsize=(6, 5))
+    #prop_labels = dict(rho=r'$\rho$',u=r'$u$',T=r'$T$')
+    axes.set_xlabel("x")
+    axes.set_ylabel("y")
+    axes.scatter(data_src.get('x'), data_src.get('y'), c=data_src.get('u'), label=data_src.label, **data_src.get_plot_kws())
+    plt.show(block=True)
 #--------------------------------------------------------------------------------------------------
