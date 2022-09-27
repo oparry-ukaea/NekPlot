@@ -11,10 +11,14 @@ def _is_valid_xml(fpath):
     if not os.path.exists(fpath):
         return False
     else:
-        dom = parse(fpath)
-        for root_node_name in ["nektar","NEKTAR"]:
-            if dom.getElementsByTagName(root_node_name):
-                return True
+        try:
+            dom = parse(fpath)
+            for root_node_name in ["nektar","NEKTAR"]:
+                if dom.getElementsByTagName(root_node_name):
+                    return True
+        except Exception as ex:
+            msg = str(ex)
+            print(f"Failed to parse {fpath}: '{msg}' - skipping")
         return False
 #--------------------------------------------------------------------------------------------------
 
@@ -58,7 +62,7 @@ def _read_session_and_mesh(fpaths, *other_args):
             session = SessionReader.CreateInstance(args)
             mesh = MeshGraph.Read(session)
             return session,mesh
-        except NekError:
+        except NekError as ex:
             # Silently ignore invalid input files and return None
             return None,None
 #--------------------------------------------------------------------------------------------------
