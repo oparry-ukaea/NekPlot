@@ -1,4 +1,5 @@
 from matplotlib import pyplot as plt
+import numpy as np
 
 # define some sets of plot keywords
 plot_styles = {}
@@ -34,11 +35,36 @@ def plot_rho_u_T(data_srcs,fpath=None):
 #--------------------------------------------------------------------------------------------------
 
 #--------------------------------------------------------------------------------------------------
-def plot_u_field(data_src):
-    fig,axes = plt.subplots(nrows=1, ncols=1, figsize=(6, 5))
-    #prop_labels = dict(rho=r'$\rho$',u=r'$u$',T=r'$T$')
+def plot_u_field(data_src,mode='img',log=False):
+    fwidth = 1.5 if mode=='img' else 9
+    fig,axes = plt.subplots(nrows=1, ncols=1, figsize=(fwidth, 7.5))
+    
     axes.set_xlabel("x")
     axes.set_ylabel("y")
-    axes.scatter(data_src.get('x'), data_src.get('y'), c=data_src.get('u'), label=data_src.label, **data_src.get_plot_kws())
+
+    x = data_src.get('x')
+    y = data_src.get('y')
+    u1D = data_src.get('u')
+
+    if mode == 'img':
+        # Regular spaced coords vary a bit after 12th decimal point; round them to get unique values:
+        xb = sorted(set(np.round(x,decimals=12)))
+        yb = sorted(set(np.round(y,decimals=12)))
+        xindices = np.digitize(x,xb)-1
+        yindices = np.digitize(y,yb)-1
+
+        u = np.ones((len(xb),len(yb)))
+        for i1D,(ix,iy) in enumerate(zip(xindices,yindices)):
+            u[ix,iy] = u1D[i1D]
+
+        if log:
+            #u[u<0]=1e-6
+            u = np.log10(u+1)
+
+        plt.imshow(u,interpolation='none', extent=[min(xb),max(xb),min(yb),max(yb)],aspect=0.2,vmax=np.percentile(u,98))
+    elif mode=='scatter':
+        axes.scatter(x, y, c=u1D, label=data_src.label, **data_src.get_plot_kws())
+    else:
+        raise ValueError(f"plot_u_field: {mode} is not a valid mode string")
     plt.show(block=True)
 #--------------------------------------------------------------------------------------------------
