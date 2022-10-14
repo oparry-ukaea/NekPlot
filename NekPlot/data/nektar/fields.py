@@ -14,7 +14,7 @@ def detect_filebase(root_dir,exts=["chk","fld"]):
         return first_fbase
 
 
-def read_fields(fpath, config_fpaths, *args, derived_fields=None, **kwargs):
+def read_fields(fpath, config_fpaths, *args, derived_fields={}, compute_gradients=False, **kwargs):
     """Read chk/fld files/dirs using NekPy"""
     if not os.path.exists(fpath):
         raise RuntimeError(__name__+f": No nektar output found at {fpath}")
@@ -29,6 +29,10 @@ def read_fields(fpath, config_fpaths, *args, derived_fields=None, **kwargs):
         # Add any derived fields that have been requested
         for new_field_name,new_field_def in derived_fields.items():
             ProcessModule.Create("fieldfromstring", field, fieldstr=new_field_def, fieldname=new_field_name).Run()
+
+        # Compute gradients for all fields, if requested
+        if compute_gradients:
+            ProcessModule.Create("gradient",field).Run()
 
         # Return equi-spaced points for now
         ProcessModule.Create("equispacedoutput", field).Run()
