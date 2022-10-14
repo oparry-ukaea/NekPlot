@@ -7,6 +7,7 @@ class NektarDataSrc(DiskDataSrc):
     def __init__(self,run_root,session_fnames=None,chk_num=None,file_base=None, **kwargs) -> None:
         super().__init__(**kwargs)
         self.chk_num = chk_num
+        self.compute_gradients=False
         self.derived_fields = {}
         self.fd = None # Field data cache
         self.file_base = file_base
@@ -27,6 +28,23 @@ class NektarDataSrc(DiskDataSrc):
         self.derived_fields[field_name] = field_def
         self._var_idx_map[field_name] = len(self._var_idx_map)
 
+    def add_gradients(self):
+        # Not sure about the effects of calling this twice yet, explicitly disable it for now.
+        if not self.compute_gradients:
+            self.compute_gradients=True
+            nDims = self.mesh.GetMeshDimension()
+            current_fields = list(self._var_idx_map.keys())[nDims:]
+            grad_field_names = []
+            for field_name in current_fields:
+                coord_labels = 'xyz'
+                for dim in range(nDims):
+                    grad_field_name = field_name + "_" + coord_labels[dim]
+                    grad_field_names.append(grad_field_name)
+                    self._var_idx_map[grad_field_name] = len(self._var_idx_map)
+            return grad_field_names
+        else:
+            print("Ignoring repeat call to add_gradients()")
+            return []
 
     def get_session(self):
         return self.session
@@ -47,7 +65,7 @@ class NektarDataSrc(DiskDataSrc):
             path_end = f"{file_base}.fld" if self.chk_num is None else f"{file_base}_{self.chk_num}.chk"
             field_fpath = os.path.join(self.run_root,path_end)
             # Read field data. For now this just gets equally spaced points
-            self.fd = read_fields(field_fpath, self.session_fpaths, *args, derived_fields=self.derived_fields, **kwargs)
+            self.fd = read_fields(field_fpath, self.session_fpaths, *args, derived_fields=self.derived_fields, compute_gradients=self.compute_gradients, **kwargs)
 
         return self.fd.GetPts(var_idx)
 
