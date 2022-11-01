@@ -9,13 +9,16 @@ class NektarDataSrc(DiskDataSrc):
         self.chk_num = chk_num
         self.compute_gradients=False
         self.derived_fields = {}
-        self.fd = None # Field data cache
+        self.fd = {} # Field data cache
         self.file_base = file_base
         self.mesh = None
         self.run_root = run_root
         self.session = None
         self.session_fnames = session_fnames
         self.type = "NEKTAR"
+
+        # Allowed data retrieval modes
+        self.valid_modes = ['equispacedoutput','interppoints']
 
         # Allow more args to be passed through to read_session_and_mesh here?
         self.session,self.session_fpaths,self.mesh = read_session_and_mesh(self.run_root, session_fnames=self.session_fnames)
@@ -60,14 +63,19 @@ class NektarDataSrc(DiskDataSrc):
         var_idx = self._get_var_idx(var_name)
 
         file_base = self.file_base if self.file_base is not None else detect_filebase(self.run_root)
-        # By default, cache field data in self.fs
-        if self.fd is None or not use_cache:
+        # By default, cache field data in self.fs dict
+        #   Allow data retrieval in multiple 'modes' by storing them under different keys in the cache
+        mode = kwargs.pop('mode','equispacedoutput')
+        if not mode in self.fd or not use_cache:
             path_end = f"{file_base}.fld" if self.chk_num is None else f"{file_base}_{self.chk_num}.chk"
             field_fpath = os.path.join(self.run_root,path_end)
             # Read field data. For now this just gets equally spaced points
-            self.fd = read_fields(field_fpath, self.session_fpaths, *args, derived_fields=self.derived_fields, compute_gradients=self.compute_gradients, **kwargs)
+            if mode in self.valid_modes:
+                self.fd[mode] = read_fields(field_fpath, self.session_fpaths, *args, derived_fields=self.derived_fields, compute_gradients=self.compute_gradients, mode=mode, **kwargs)
+            else:
+                raise ValueError(f"{mode} is not a valid mode for getting Nektar fields.  Allowed values are: ["+",".join(self.valid_modes)+"]")
 
-        return self.fd.GetPts(var_idx)
+        return self.fd[mode].GetPts(var_idx)
 
 
     def _get_var_idx(self,var_name):
