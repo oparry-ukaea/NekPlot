@@ -38,10 +38,6 @@ def read_fields(fpath, config_fpaths, *args, derived_fields={}, compute_gradient
             interp_str = kwargs.pop('interp_str',None)
             if interp_str is None:
                 raise RuntimeError(f"WARNING: 'interp_str' is a required kw arg when getting Nektar data in {mode} mode.")
-            # Interpolation mode doesn't work with more than one config file; bail out if multiple were supplied
-            Nconfig = len(config_fpaths)
-            if Nconfig != 1:
-                raise ValueError(__name__+": Exactly one xml config file must be supplied in 'interppoints' mode; received {}".format(Nconfig))
             run_interppoints_modules(field, fpath, config_fpaths, interp_str, *args, **kwargs)
         return field
     except Exception as ex:
@@ -72,7 +68,8 @@ def run_equispacedoutput_modules(field, fpath, config_fpaths, *args, derived_fie
 
 #--------------------------------------------------------------------------------------------------
 def run_interppoints_modules(field, fpath, config_fpaths, interp_str, *args, **kwargs):
-    interp_kwargs=dict(fromxml=config_fpaths[0], fromfld=fpath)
+    config_fpath_str = ",".join(config_fpaths)
+    interp_kwargs=dict(fromxml=config_fpath_str, fromfld=fpath)
     if interp_str.startswith('line='):
         interp_kwargs.update(line=interp_str[5:])
     else:
